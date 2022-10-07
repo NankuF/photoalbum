@@ -91,6 +91,6 @@ class Photo(models.Model):
         super(Photo, self).save()
 
     def delete(self, using=None, keep_parents=False):
-        if self.album_id:
+        if self.album_id and self.album.images_count > 0:
             Album.objects.filter(pk=self.album_id).update(images_count=F('images_count') - 1)
         super(Photo, self).delete()
