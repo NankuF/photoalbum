@@ -37,7 +37,7 @@ class AlbumAdmin(admin.ModelAdmin):
 
 @admin.register(Photo)
 class PhotoAdmin(admin.ModelAdmin):
-    list_display = ('title', 'image', 'album', 'tag', 'created')
+    list_display = ('title', 'image', 'thumbnail', 'album', 'tag', 'created', )
     list_filter = ('created', 'album')
     readonly_fields = ('created', 'thumbnail')
     exclude = ('thumbnail',)

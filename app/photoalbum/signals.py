@@ -24,5 +24,6 @@ def create_thumbnail(sender, instance, *args, **kwargs):
         filename, extension = instance.image.name.split(os.sep)[1].split('.')
         thumbnail = Photo.create_thumbnail(image_path, filename, extension)
         instance.thumbnail = thumbnail
+        instance.save()
     except:
         pass
