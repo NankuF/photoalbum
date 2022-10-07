@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 from django.db import models
+from django.db.models import F
 
 
 class Album(models.Model):
@@ -81,3 +82,15 @@ class Photo(models.Model):
         fullpath, basename = os.path.split(resized_file.name)
         last_two_dirs = f'{os.sep}'.join(fullpath.split(os.sep)[-2:])
         return os.path.join(last_two_dirs, basename)
+
+    def save(
+            self, force_insert=False, force_update=False, using=None, update_fields=None
+    ):
+        if not self.pk:
+            Album.objects.filter(pk=self.album_id).update(images_count=F('images_count') + 1)
+        super(Photo, self).save()
+
+    def delete(self, using=None, keep_parents=False):
+        if self.album_id:
+            Album.objects.filter(pk=self.album_id).update(images_count=F('images_count') - 1)
+        super(Photo, self).delete()
