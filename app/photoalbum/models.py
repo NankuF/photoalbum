@@ -1,3 +1,7 @@
+import os
+
+from PIL import Image
+from PIL.Image import Resampling
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -53,3 +57,27 @@ class Photo(models.Model):
 
     def __str__(self):
         return self.title
+
+    @staticmethod
+    def create_thumbnail(image_path, filename, extension):
+        root_path = os.path.join(settings.BASE_DIR, settings.MEDIA_ROOT)
+        thumbnail_path = os.path.join(root_path, 'images', 'thumbnails')
+        if not os.path.exists(thumbnail_path):
+            os.makedirs(thumbnail_path, exist_ok=True)
+        resized_file_fullpath = os.path.join(thumbnail_path, f'{filename}_resized.{extension}')
+        resized_file = open(resized_file_fullpath, "w")
+        MAX_SIZE = 150
+        image = Image.open(image_path)
+
+        if image.size[0] > image.size[1]:
+            resized_width = MAX_SIZE
+            resized_height = int(round((MAX_SIZE / float(image.size[0])) * image.size[1]))
+        else:
+            resized_height = MAX_SIZE
+            resized_width = int(round((MAX_SIZE / float(image.size[1])) * image.size[0]))
+
+        image = image.resize((resized_width, resized_height), Resampling.LANCZOS)
+        image.save(resized_file, 'JPEG')
+        fullpath, basename = os.path.split(resized_file.name)
+        last_two_dirs = f'{os.sep}'.join(fullpath.split(os.sep)[-2:])
+        return os.path.join(last_two_dirs, basename)
