@@ -86,7 +86,7 @@ class Photo(models.Model):
         if not self.pk:
             Album.objects.filter(pk=self.album_id).update(images_count=F('images_count') + 1)
         super(Photo, self).save()
-        filename_with_extension = self.image.name.split('/')[1]
+        filename_with_extension = self.image.name.split('/')[-1]
         filename, extension = filename_with_extension.split('.')
         images_path = os.path.join(settings.MEDIA_ROOT, settings.IMAGES_DIR, filename_with_extension)
         thumbnail = self.create_thumbnail(images_path,filename, extension)
