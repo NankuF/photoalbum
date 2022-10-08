@@ -38,6 +38,12 @@ SECRET_KEY=django-insecure-^dqzg8p!j@6gen7m7==43+9a9u^f_t$&_h5w1m)j5+8qlpq!g+
 DEBUG=True
 ```
 ```commandline
+python 3 -m venv venv
+```
+```commandline
+. ./venv/bin/activate
+```
+```commandline
 pip install -r requirements.txt
 ```
 ```commandline
