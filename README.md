@@ -27,12 +27,16 @@
 ---
 # Визуальная проверка
 ### Запуск
-1. создать файл `.env` внутри `photoalbum/app/`
+1. 
+2. Выполнить последовательно команды
+```commandline
+cd photoalbum/app
+```
+создать файл `.env` внутри `photoalbum/app/`
 ```text
 SECRET_KEY=django-insecure-^dqzg8p!j@6gen7m7==43+9a9u^f_t$&_h5w1m)j5+8qlpq!g+
 DEBUG=True
 ```
-2. Выполнить последовательно команды
 ```commandline
 pip install -r requirements.txt
 ```
@@ -41,6 +45,9 @@ python manage.py makemigrations
 ```
 ```commandline
 python manage.py migrate
+```
+```commandline
+mkdir -p media/images
 ```
 ```commandline
 python manage.py fill_db
