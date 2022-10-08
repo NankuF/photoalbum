@@ -141,6 +141,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # images settings
 IMAGE_SIZE_LIMIT = 5
 IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png']
+IMAGES_DIR = 'images'
 
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES':[

@@ -55,8 +55,7 @@ class PhotoAdmin(admin.ModelAdmin):
         return qs.filter(album__username=request.user)
 
     def delete_queryset(self, request, queryset):
-        """При удалении фотографии уменьшается счетчик фото в альбоме"""
+        """При удалении фотографии вызовет базовый метод в модели"""
         for photo in queryset:
-            if photo.album_id and photo.album.images_count > 0:
-                Album.objects.filter(pk=photo.album_id).update(images_count=F('images_count') - 1)
-            super(PhotoAdmin, self).delete_queryset(request, queryset)
+            photo.delete()
+        super(PhotoAdmin, self).delete_queryset(request, queryset)

@@ -37,7 +37,7 @@ class Photo(models.Model):
     """
     album = models.ForeignKey(Album, on_delete=models.CASCADE, related_name='photo_album', verbose_name='Альбом')
     title = models.CharField(max_length=255, verbose_name='Название фотографии', unique=True)
-    image = models.ImageField(upload_to='images',
+    image = models.ImageField(upload_to=settings.IMAGES_DIR,
                               max_length=250,
                               verbose_name='Изображение',
                               validators=[
@@ -47,7 +47,7 @@ class Photo(models.Model):
                                       message=f'Разрешённые расширения: {", ".join(settings.IMAGE_EXTENSIONS)}'
                                   ),
                               ])
-    thumbnail = models.ImageField(upload_to='thumbnails', verbose_name='Миниатюра', blank=True)
+    thumbnail = models.ImageField(upload_to='images/thumbnails', verbose_name='Миниатюра', blank=True)
     tag = models.CharField(max_length=30, verbose_name='Тэг', blank=True)
     created = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
 
@@ -61,8 +61,7 @@ class Photo(models.Model):
 
     @staticmethod
     def create_thumbnail(image_path, filename, extension):
-        root_path = os.path.join(settings.BASE_DIR, settings.MEDIA_ROOT)
-        thumbnail_path = os.path.join(root_path, 'images', 'thumbnails')
+        thumbnail_path = os.path.join(settings.MEDIA_ROOT, settings.IMAGES_DIR, 'thumbnails')
         if not os.path.exists(thumbnail_path):
             os.makedirs(thumbnail_path, exist_ok=True)
         resized_file_fullpath = os.path.join(thumbnail_path, f'{filename}_resized.{extension}')
@@ -83,14 +82,23 @@ class Photo(models.Model):
         last_two_dirs = f'{os.sep}'.join(fullpath.split(os.sep)[-2:])
         return os.path.join(last_two_dirs, basename)
 
-    def save(
-            self, force_insert=False, force_update=False, using=None, update_fields=None
-    ):
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if not self.pk:
             Album.objects.filter(pk=self.album_id).update(images_count=F('images_count') + 1)
         super(Photo, self).save()
+        filename_with_extension = self.image.name.split('/')[1]
+        filename, extension = filename_with_extension.split('.')
+        images_path = os.path.join(settings.MEDIA_ROOT, settings.IMAGES_DIR, filename_with_extension)
+        thumbnail = self.create_thumbnail(images_path,filename, extension)
+        self.thumbnail = thumbnail
+        super(Photo, self).save()
 
     def delete(self, using=None, keep_parents=False):
+        """Удалит фото и миниатюру с диска и уменьшит счетчик фото в альбоме"""
         if self.album_id and self.album.images_count > 0:
             Album.objects.filter(pk=self.album_id).update(images_count=F('images_count') - 1)
+        if os.path.exists(self.image.path):
+            os.remove(self.image.path)
+        if os.path.exists(self.thumbnail.path):
+            os.remove(self.thumbnail.path)
         super(Photo, self).delete()

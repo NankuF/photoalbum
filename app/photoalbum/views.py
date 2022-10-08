@@ -9,9 +9,7 @@ from .serializers import AlbumSerializer, PhotoSerializer
 
 class AlbumViewSet(viewsets.ModelViewSet):
     serializer_class = AlbumSerializer
-    # для фильтра бекенда ставится django-filter
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    # кастомные классы вместо filterset_fields
     filterset_class = CustomAlbumFilter
     search_fields = ('title',)
     ordering_fields = ('created', 'images_count')
