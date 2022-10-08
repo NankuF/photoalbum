@@ -89,7 +89,7 @@ class Photo(models.Model):
         filename_with_extension = self.image.name.split('/')[-1]
         filename, extension = filename_with_extension.split('.')
         images_path = os.path.join(settings.MEDIA_ROOT, settings.IMAGES_DIR, filename_with_extension)
-        thumbnail = self.create_thumbnail(images_path,filename, extension)
+        thumbnail = self.create_thumbnail(images_path, filename, extension)
         self.thumbnail = thumbnail
         super(Photo, self).save()
 

@@ -12,12 +12,12 @@ from photoalbum.models import Album, Photo
 
 
 def create_image():
-    x = random.randrange(0, 1000)
+    number = random.randrange(0, 1000)
     width = 700
     height = 300
 
     img = Image.new(mode="RGB", size=(width, height))
-    path = os.path.join(settings.MEDIA_ROOT, settings.IMAGES_DIR, f'photo_{x}.jpg')
+    path = os.path.join(settings.MEDIA_ROOT, settings.IMAGES_DIR, f'photo_{number}.jpg')
     img.save(path)
     fullpath, basename = os.path.split(path)
     last_dir = f'{os.sep}'.join(fullpath.split(os.sep)[-1:])
